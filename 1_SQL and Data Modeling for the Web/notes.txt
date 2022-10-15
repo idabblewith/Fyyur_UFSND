@@ -244,7 +244,27 @@ Stack
 
 6. Migrations
 
-    Changing data structure on existing data
+    Changing data structure/schema where there may be existing data
+        Setting nullable=True in migration file for nullable=False existing data
+
+        def upgrade:
+            op.add_column('todos', sa.Column('completed', sa.Boolean(), nullable=False))
+            op.execute('UPDATE todos SET completed = False WHERE completed IS NULL;')
+            op.alter_column('todos', 'completed', nullable=False)
+
+    Commands:
+        cd to directory
+        export FLASK_APP=app.py
+        flask db init - instatiate migrations
+        flask db stamp head - reset if db not up to date
+        flask db migrate - create migration script template to fill out
+        flask db upgrade - apply unapplied migrations
+        flask db downgrade - rollback applied migrations
+
+        pg_ctl -D /usr/local/var/postgres stop
+        pg_ctl -D /usr/local/var/postgres start
+
+    - pip install Flask-Migrate
 
 -----------------------------------------------------------------------------
 
