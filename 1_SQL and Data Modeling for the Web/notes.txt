@@ -169,11 +169,82 @@ Stack
 
 5. Build a CRUD App with SQLAlchemy 1/2
 
+    Concepts:
+        CRUD 
+            Concept: Create, Read, Update, Delete
+            SQL: INSERT, SELECT, UPDATE, Delete
+            ORM: db.session.add(user1), User.query.all(), user1.name = 'Bob', db.session.delete(user1)
+        MVC Pattern
+            Model View Controller
+            Models: Manage data and business Logic
+            Views: Handle Display & representation Logic
+            Controllers: Routes commands to models and views with control logic
+        Jinja rendering
+            {% for a in data %}
+                {{% a.var %}}
+            {% endfor %}
+        URL query params
+            /foo?field1=value1 using request.args
+        Forms using request.form
+            username = request.form.get('username')
+            password = request.form.get('password')
+        Data input using request.data *MODERN*
+            data_string = request.data
+            data_dictionary = json.loads(data_string)
+        AJAX - asyncronously send data
+            XMLHttp request
+                var xhttp = new XMLHttpRequest();
+                description = document.getElementById("description").value;
+                xhttp.open("GET", "/todos/create?description=" + description);
+                xhttp.send();
 
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState === 4 && this.status === 200) { 
+                    // on successful response
+                    console.log(xhttp.responseText);
+                    }
+                };
+
+            Fetch
+                fetch('/my/request', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        'description': 'some description here'
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+            Try, Except, (Else), Finally
+                import sys
+                try:
+                    todo = Todo(description=description)
+                    db.session.add(todo)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+                    error=True
+                    print(sys.exc_info())
+                else:
+                    pass
+                finally:
+                    db.session.close()
+            
+            Abort
+       
+
+    Commands:
+        return render_template('index.html')
+
+        INSERT INTO todos (description) VALUES ('c');
+        
 
 -----------------------------------------------------------------------------
 
 6. Migrations
+
+    Changing data structure on existing data
 
 -----------------------------------------------------------------------------
 
