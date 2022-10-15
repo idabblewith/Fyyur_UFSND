@@ -1,0 +1,132 @@
+Stack
+    Python3
+    Flask
+    PostgreSQL
+    psycopg2
+    SQLAlchemy
+    Flask-SQLAlchemy
+
+SQL AND DATA MODELING FOR THE WEB
+1-2. Intro & Interacting with Databases
+    Concepts:
+        Relational DBs:
+            PostgreSQL, MySQL, Oracle, SQLServer, SQLite
+        Non-RDBs:
+            MongoDB, Perst, Cassandra, Neo4J
+        Client-Server Model:
+            DB > Server/App > Client
+        TCPIP:
+            Port 80: HTTP
+            Port 5432: DB 
+        Transactions/Sessions/Rollbacks
+        DBAPIs & psycopg2
+
+    Commands:
+        After adding 
+            PGUSER postgres 
+            add psql bin location to path 
+            vim .bashrc export PATH=/usr/lib/postgresql/15/bin/:$PATH
+            restart vscode/gitbash
+        createdb DBNAME
+        dropdb DBNAME
+        dropdb DBNAME && createdb DBNAME
+        psql DBNAME
+            create table table1(
+                id INTEGER PRIMARY KEY, 
+                description VARCHAR NOT NULL
+            );
+            \dt
+            \d table1
+            \c DBNAME
+            \q
+            table TABLENAME OR SELECT * from table1 (WHERE id = 1;)
+            INSERT INTO table1 (id, description)
+                VALUES (1, 'this is a thing');
+
+    -Install Python3 
+    -Install PostgreSQL
+    -Install psycopg2 (pip install psycopg2-binary)
+
+3. SQLAlchemy Basics
+    Concepts:
+        Layers of Abstraction
+            1. DBAPI (above)
+            2. Dialect (flavour)
+                We can forget about system we are using (SQLite/Postgres)
+            3. Connection Pool
+                No longer need to manually open and close connections to db
+            4. Engine
+                Lowest level of abstraction (1/3) - similar syntax to psycopg2 DBAPI
+                e.g.
+                    from sqlalchemy import create_engine
+
+                    engine = create_engine('postgres://..')
+                    conn = engine.connect()
+                    result = conn.execute('SELECT * from vehicles;')
+                    row = result.fetchone()
+                    rows = result.fetchall()
+            5. SQL Expressions (2/3)
+                Ability to use raw SQL e.g.
+                    todos = Table('todos', ..)
+                    ins = todos.insert().values(
+                        description='Clean room',
+                        completed=False,
+                    )
+                    s = select([todos])
+                    conn = engine.connect()
+                    result = conn.execute(ins)
+                    result = conn.execute(s)
+                    result.close()
+                    todos.c.description
+            6. SQLAlchemy ORM (optional - highest level of abstraction)
+                Python classes of objects in db
+                Tables map to classes
+                Table records map to class objects
+                Table columns map to class attributes
+        Constraints & Data Types
+            db.Column(db.Integer, db.Boolean, db.Varchar)
+            nullable=False
+            unique=True
+            price = db.Column(db.Float, db.CheckConstraint('price > 0'))
+
+    Commands:
+        FLASK_APP=hello.py flask run or ifnamemain
+        SETUP IN PY:
+            app = Flask(__name__)
+            app.config[
+                "SQLALCHEMY_DATABASE_URI"
+            ] = f"{dialect}://{username}:{password}@{db_host}:{db_port}/{db_name}"
+
+            db = SQLAlchemy(app)
+            @app.route('/')
+            def index():
+                return ...
+
+            if __name__ == '__main__':
+                app.run(host='0.0.0.0', port=9000)
+        ADD MODEL IN PY:
+            class Person(db.Model):
+                __tablename__ = 'persons'
+                id = db.Column(db.Integer, primary_key=True)
+                name = db.Column(db.String(), nullable=False)
+
+            with app.app_context():
+                db.create_all()
+
+        Person.query.all()
+        Person.query.first()
+        Person.query.filter(Person.name == 'Bob')
+        person = Person(name="Jeff")
+        db.session.add(person)
+        db.session.commit(person)
+
+    - pip install flask (--user optionally)
+    - pip install flask-sqlalchemy
+    - run hello.py & create a persons record 
+    - alter index method:
+        person = Person.query.first()
+        return f"Hello {person.name}!"
+    - set debug mode to on so latest changes reflected
+        FLASK_APP=hello.py FLASK_DEBUG=true flask run
+            or
+        in app.run(debug=True)
