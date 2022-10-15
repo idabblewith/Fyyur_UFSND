@@ -1,3 +1,5 @@
+SQL AND DATA MODELING FOR THE WEB
+
 Stack
     Python3
     Flask
@@ -6,8 +8,10 @@ Stack
     SQLAlchemy
     Flask-SQLAlchemy
 
-SQL AND DATA MODELING FOR THE WEB
+-----------------------------------------------------------------------------
+
 1-2. Intro & Interacting with Databases
+
     Concepts:
         Relational DBs:
             PostgreSQL, MySQL, Oracle, SQLServer, SQLite
@@ -47,7 +51,10 @@ SQL AND DATA MODELING FOR THE WEB
     -Install PostgreSQL
     -Install psycopg2 (pip install psycopg2-binary)
 
+-----------------------------------------------------------------------------
+
 3. SQLAlchemy Basics
+
     Concepts:
         Layers of Abstraction
             1. DBAPI (above)
@@ -130,3 +137,50 @@ SQL AND DATA MODELING FOR THE WEB
         FLASK_APP=hello.py FLASK_DEBUG=true flask run
             or
         in app.run(debug=True)
+
+-----------------------------------------------------------------------------
+
+4. SQLAlchemy ORM in Depth
+
+    Concepts:
+        Object Lifecylce Stages:
+            Transient: Object exists (defined)
+                user1 = User(name="Bob")
+            Pending: Object attached to session (undo via db.session.rollback() available)
+                db.session.add(user1)
+            Flushed: Event that takes pending changes and translates them to SQL commands
+                (As if commited, but not actually - allows u to query)
+                Person.query.filter_by(name="Bob").all()
+            Committed: When commit called an object actually added
+                db.session.commit()
+
+
+    Commands:
+        db.session.add_all([person1, person2])
+        db.session.commit()
+        Person.query.get(1)
+        Person.query.filter_by(name="Bob").delete()
+        Person.query.limit(100).all()
+        query = Task.query.filter(completed=True)
+            query.count()
+        Driver.query.join('vehicles')
+
+-----------------------------------------------------------------------------
+
+5. Build a CRUD App with SQLAlchemy 1/2
+
+
+
+-----------------------------------------------------------------------------
+
+6. Migrations
+
+-----------------------------------------------------------------------------
+
+7. Build a CRUD App with SQLAlchemy 2/2
+
+-----------------------------------------------------------------------------
+
+8. Project: Fyyur
+
+-----------------------------------------------------------------------------
