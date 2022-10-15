@@ -244,13 +244,14 @@ Stack
 
 6. Migrations
 
-    Changing data structure/schema where there may be existing data
-        Setting nullable=True in migration file for nullable=False existing data
+    Concepts:
+        Changing data structure/schema where there may be existing data
+            Setting nullable=True in migration file for nullable=False existing data
 
-        def upgrade:
-            op.add_column('todos', sa.Column('completed', sa.Boolean(), nullable=False))
-            op.execute('UPDATE todos SET completed = False WHERE completed IS NULL;')
-            op.alter_column('todos', 'completed', nullable=False)
+            def upgrade:
+                op.add_column('todos', sa.Column('completed', sa.Boolean(), nullable=False))
+                op.execute('UPDATE todos SET completed = False WHERE completed IS NULL;')
+                op.alter_column('todos', 'completed', nullable=False)
 
     Commands:
         cd to directory
@@ -269,6 +270,78 @@ Stack
 -----------------------------------------------------------------------------
 
 7. Build a CRUD App with SQLAlchemy 2/2
+
+    Concepts:
+        Updating 
+            user = User.query.get(4)
+            user.name = 'Jerry'
+            db.session.commit()
+
+        Jinja if
+            {% if d.completed %} checked {% endif %}
+
+        Ordering
+            Todo.query.order_by('id').all()
+
+        Deleting
+            todo = Todo.query.get(id)
+            db.session.delete(todo) OR Todo.query.filter_by(id=id).delete()
+            db.session.commit()
+
+        Relationships
+            FK on child table/record from Parent table/record
+                SELECT make, model, year FROM vehicles
+                    JOIN drivers
+                    ON vehicles.driver_id = drivers.id
+                    WHERE drivers.name = 'Sarah';
+            db.relationship(
+                'Somechild', 
+                backref='some_parent', 
+                lazy=True,
+                cascade=all                     // save-update, delete-orphan
+            ) 
+                some_parent is a custom name u set to reference parent
+
+            db.ForeignKey('some_parents.id') <-- name of table (not custom) and key
+            
+            Lazy Loading vs Eager Loading
+                150ms wait is noticable negative impact 
+                LL =
+                    PRO: no initial wait time; only load as needed
+                    CON: produces join SQL call every time a request is made for a joined asset
+                EL = 
+                    PRO: reduces further queries to db
+                    CON: loading the joined table has long iniital load time
+        
+            One-To-One
+                "An account has one user"
+                "A passport belongs to one person"
+
+            One-To-Many Relationship
+                "A class has many students"
+                "A teacher has many students"
+
+            Many-To-Many
+                "A school teaches many subjects, and a subject is taught in many schools"
+
+                E.G.
+                order_items = db.Table('order_items',
+                    db.Column('order_id', db.Integer, db.ForeignKey('order.id'), primary_key=True),
+                    db.Column('product_id', db.Integer, db.ForeignKey('product.id'), primary_key=True)
+                )
+
+                class Order(db.Model):
+                id = db.Column(db.Integer, primary_key=True)
+                status = db.Column(db.String(), nullable=False)
+                products = db.relationship('Product', secondary=order_items,
+                    backref=db.backref('orders', lazy=True))
+
+                class Product(db.Model):
+                id = db.Column(db.Integer, primary_key=True)
+                name = db.Column(db.String(), nullable=False)
+
+    - insert into todolists (name) values ('uncategorized');
+    - update todos set list_id = 1 where list_id is null;
 
 -----------------------------------------------------------------------------
 
