@@ -348,3 +348,11 @@ Stack
 8. Project: Fyyur
 
 -----------------------------------------------------------------------------
+
+    - pip install Flask-WTF 
+    - pip install Flask-Moment
+    - pip install Babel
+    - pip install python-dateutil
+    - pip install fabric
+    - createdb fyyur
+    - flask db upgrade (if downloading)

@@ -1,0 +1,40 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Fyyur | Shows{% endblock %}
+{% block content %}
+
+<style>
+    #und{
+        text-decoration: none;
+        color: black;
+    }
+</style>
+
+
+{%for x in data %}
+    <a id="und" href="/venues/{{ x.venue.id }}">
+        <div class="item">
+            <h3>{{x.venue.name}} | 
+                {% if x.count < 2 %}
+                    {{x.count}} show
+                {% else %}
+                    {{x.count}} shows
+                {% endif %}
+            </h3>
+        </div>
+    </a>
+
+    <div class="row shows">
+        {%for s in x.shows %}
+            <div class="col-sm-4">
+                <div class="tile tile-show">
+                    <img src="{{ s[3] }}" alt="Artist Image" />
+                    <h5><a href="/artists/{{ s[0].artist_id }}">{{ s[1].name }}</a></h5>
+                    <p>playing at</p>
+                    <h5><a href="/venues/{{ s[0].venue_id }}">{{ s[2].name }}</a></h5>
+                    <h4>{{ s[0].start_time.strftime('%Y-%m-%d %H:%M:%S') }}</h4>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endfor %}
+{% endblock %}
